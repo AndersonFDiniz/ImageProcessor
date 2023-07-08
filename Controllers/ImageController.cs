@@ -12,6 +12,7 @@ using static System.Net.WebRequestMethods;
 using System.Text.Encodings.Web;
 using System.Web;
 using ImageProcessor.Services;
+using Microsoft.Extensions.Logging;
 
 namespace ImageProcessor.Controllers
 {
@@ -19,13 +20,36 @@ namespace ImageProcessor.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
+        private ILogger<ImageController> _logger;
         private readonly ImageProcessorService _imageSevice;
-        public ImageController(ImageProcessorService imageSevice)
+        public ImageController(ImageProcessorService imageSevice, ILogger<ImageController> logger)
         {
+            _logger = logger;
             _imageSevice = imageSevice;
         }
         [HttpPost]
-        public IActionResult UploadImage(IFormFile photo) => (photo != null && photo.Length > 0) ? Ok(_imageSevice.ImagemPros(photo)) : BadRequest("Nenhuma imagem foi enviada.");
+        public IActionResult UploadImage(IFormFile photo)
+        {
+            if (photo == null && photo.Length == 0)
+                BadRequest("Nenhuma imagem foi enviada.");
+
+            try
+            {
+                _logger.LogInformation($"<--- Inicio do processamento da imagem --->");
+                var url = _imageSevice.ImagemPros(photo);
+                _logger.LogInformation($"<--- Imagem processada com sucesso url: {url} --->");
+                return Ok(url);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Messagem de erro: {e.Message}");
+                _logger.LogError($"Stacktrace do erro: {e.StackTrace}");
+                return BadRequest(e.Message);
+            }           
+        }
+            
+            
+            
 
         [HttpDelete("{filename}")]
         public IActionResult DeleteImage(string filename) {

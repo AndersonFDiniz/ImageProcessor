@@ -13,12 +13,14 @@
 		<None Include="wwwroot" />
 	</ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NReco.Logging.File" Version="1.1.6" />
     <PackageReference Include="Numpy" Version="3.11.1.33" />
     <PackageReference Include="OpenCvSharp4" Version="4.7.0.20230115" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.7.0.20230115" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Logs\" />
     <Folder Include="wwwroot\Content\" />
   </ItemGroup>
 
